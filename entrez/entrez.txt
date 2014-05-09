@@ -1,0 +1,20 @@
+I found 17 entries in Entrez:
+
+Fetching results... done.
+HQ621368.1 : Opuntia decumbens voucher Martinez & Eggli 146a (ZSS) ribosomal protein L16 (rpl16) gene, partial cds; chloroplast.
+HM041481.1 : Opuntia palmadora ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041480.1 : Opuntia microdasys ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041479.1 : Opuntia megasperma ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041478.1 : Opuntia macbridei ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041476.1 : Opuntia lasiacantha ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041474.1 : Opuntia helleri ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041473.1 : Opuntia excelsa ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041472.1 : Opuntia echios ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041469.1 : Nopalea sp. THH-2011 ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041468.1 : Nopalea lutea ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041467.1 : Nopalea karwinskiana ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041466.1 : Nopalea gaumeri ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041465.1 : Nopalea dejecta ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+HM041464.1 : Nopalea cochenillifera ribosomal protein L16-like (rpl16) gene, partial sequence; chloroplast.
+AY851611.1 : Opuntia polyacantha rpl16 gene, intron; chloroplast.
+AF191660.1 : Opuntia echinacea rpl16 gene; chloroplast gene for chloroplast product, partial intron sequence.
