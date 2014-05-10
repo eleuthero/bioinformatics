@@ -88,7 +88,7 @@ print "Extended all sequences to %i residues." % maxseq
 # Generate consensus sequences for each year and a
 # consensus summary file.
 
-fsum = open(join(FASTA_PATH, "consensus_summary.fasta"), "w")
+fsum = open(join(FASTA_PATH, "summary.consensus"), "w")
 
 for item in sorted(listdir(FASTA_PATH)):
     if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
