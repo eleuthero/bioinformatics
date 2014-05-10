@@ -14,6 +14,9 @@ CREATE TABLE `sequence`
 		BOOL
 		NOT NULL
 		DEFAULT false,
+	`threshold`
+		DECIMAL(3, 2)
+		DEFAULT NULL,
 	`description`
 		VARCHAR(32)
 		NOT NULL

@@ -31,6 +31,29 @@ def getYear(line):
     else:
         return 0
 
+def generateConsensusThreshold(summary, fsum, fout, threshold):
+
+    consensus_seq = Seq(str(summary.dumb_consensus(threshold = threshold,
+                                                   ambiguous = 'N',
+                                                   require_multiple = 1)),
+                            generic_dna)
+
+    consensus_rec = SeqRecord(consensus_seq,
+                              id="",
+                              description=(".%s.%i%%.Consensus" % (year, 100 * threshold)))
+
+    SeqIO.write(consensus_rec, fout, "fasta")
+    SeqIO.write(consensus_rec, fsum, "fasta")
+
+def generateConsensus(summary, fsum, fout):
+    generateConsensusThreshold(summary, fsum, fout, 1.00)
+    generateConsensusThreshold(summary, fsum, fout, 0.95)
+    generateConsensusThreshold(summary, fsum, fout, 0.90)
+    generateConsensusThreshold(summary, fsum, fout, 0.85)
+    generateConsensusThreshold(summary, fsum, fout, 0.80)
+    generateConsensusThreshold(summary, fsum, fout, 0.75)
+    generateConsensusThreshold(summary, fsum, fout, 0.70)
+
 # =========
 # Main
 # =========
@@ -62,7 +85,7 @@ for item in listdir(FASTA_PATH):
             
 print "Extended all sequences to %i residues." % maxseq
 
-# Generate 100% consensus sequence for each year and a
+# Generate consensus sequences for each year and a
 # consensus summary file.
 
 fsum = open(join(FASTA_PATH, "consensus_summary.fasta"), "w")
@@ -75,17 +98,7 @@ for item in sorted(listdir(FASTA_PATH)):
         fout = open(join(FASTA_PATH, item) + ".consensus", "w")
         year = getYear(item)
 
-        consensus_seq = Seq(str(summary.dumb_consensus(threshold = 1.0,
-                                                       ambiguous = 'N',
-                                                       require_multiple = 1)),
-                            generic_dna)
-
-        consensus_rec = SeqRecord(consensus_seq,
-                                  id="",
-                                  description=(".%s. 100%% Consensus" % year))
-
-        SeqIO.write(consensus_rec, fout, "fasta")
-        SeqIO.write(consensus_rec, fsum, "fasta")
+        generateConsensus(summary, fsum, fout)
 
         fout.close()
 
