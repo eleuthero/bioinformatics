@@ -2,6 +2,9 @@
 
 import re
 import sys
+import math
+
+from math import log10
 
 freq = { }
 
@@ -79,7 +82,7 @@ def showFrequenciesList():
 
         print
 
-def showFrequenciesTable():
+def showFrequenciesTable(log = False):
     global freq
     keys = list('abcdefghijklmnopqrstuvwxyz')
 
@@ -113,7 +116,15 @@ def showFrequenciesTable():
                 sum = 0
                 for transition in freq[current]:
                     sum += freq[current][transition]
-                print '%.5f%%,' % (100 * float(freq[current][next]) / sum), 
+
+                score = 100 * float(freq[current][next]) / sum
+
+                if log:
+                    score = math.log10(score)
+                    print '%.5f,' % score,
+                else:
+                    print '%.5f%%,' % (score),
+
             else:
                 print '0,',
         print
@@ -137,5 +148,9 @@ for sentence in sentences:
 
 # Show transition analysis.
 
-# showFrequenciesList()      # Enable this to see a list of transitions
-showFrequenciesTable()       # Enable this to see a table of transitions
+# showFrequenciesList()             # Enable this to see a list of transitions
+showFrequenciesTable(log = False)   # Enable this to see a table of transitions
+                                    # in percentage format (all transitions
+                                    # sum to 100%)
+# showFrequenciesTable(log = True)  # Enable this to see a table of transitions
+                                    # with p-score (logarithmic)
