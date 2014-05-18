@@ -62,10 +62,10 @@ def processSentence(sentence):
             compileFrequency(current, next)
             current = next 
 
-def showFrequencies():
+def showFrequenciesList():
     global freq
 
-    for current in freq:
+    for current in sorted(freq):
         print current, ' -->'
 
         sum = 0
@@ -73,10 +73,49 @@ def showFrequencies():
         for next in freq[current]:
             sum += freq[current][next]
 
-        for next in freq[current]:
+        for next in sorted(freq[current]):
             count = float(freq[current][next])
-            print '\t%s: %5i (%.3f%%)' % (next, count, count * 100 / sum)
+            print '\t%s: %5i / %5i (%.3f%%)' % (next, count, sum, count * 100 / sum)
 
+        print
+
+def showFrequenciesTable():
+    global freq
+    keys = list('abcdefghijklmnopqrstuvwxyz')
+
+    # Print header row.
+
+    print 'NXT CUR,',
+    for current in keys:
+   	print current, ',',
+    print
+
+    print '========',
+    for current in keys:
+        print '=======,',
+    print
+
+    # For each letter in the transition set...
+
+    for next in keys:
+
+        # Print header cell
+
+        print next, ',',
+
+        # For each transition into the next letter ...
+
+        for current in keys:
+            if next in freq[current]:
+
+                # Calculate probability of current --> next transition
+
+                sum = 0
+                for transition in freq[current]:
+                    sum += freq[current][transition]
+                print '%.5f%%,' % (100 * float(freq[current][next]) / sum), 
+            else:
+                print '0,',
         print
 
 # ====
@@ -98,4 +137,5 @@ for sentence in sentences:
 
 # Show transition analysis.
 
-showFrequencies()
+# showFrequenciesList()      # Enable this to see a list of transitions
+showFrequenciesTable()       # Enable this to see a table of transitions
