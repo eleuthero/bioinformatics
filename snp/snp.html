@@ -1,0 +1,27 @@
+<head>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="snp.js"></script>
+	<script>
+	
+	$(document)
+		.ready
+		(
+			function ()
+			{
+				Snp.init();
+			}
+		);
+		
+	</script>
+	<link rel="stylesheet" href="snp.css" />
+</head>
+<body>
+	<table class="SNP"></table>
+	Number of patterns: <input type="text" size="3" maxlength="3" class="PCOUNT" />
+	<br />
+	Number of SNPs: <input type="text" size="3" maxlength="3" class="SCOUNT" />
+	<br />
+	<input type="button" value="Find the next cover candidate SNP." class="COVER" />
+	<br />
+	<input type="button" value="Create a new SNP matrix." class="RESET" />
+</body>

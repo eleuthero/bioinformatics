@@ -26,3 +26,12 @@ which the scripts start work.
     for importing the sequence and consensus data into a MySQL database
     that has been prepared with the file schema/hiv_schema.sql.
     The output of this script is captured as schema/hiv_data.sql.
+
+4.  The script 4_alignment.py reads the expanded sequences and generates
+    a map of the alignment based on the number of sequences that have
+    a residue at every alignment index.  This is important because we
+    need to "reduce" the alignment so that it falls into agreement with
+    known protein maps of the HIV-1 subtype B genome, and there are a 
+    number of sequences with insertions that are almost completely  
+    unshared by other sequences, and those are good candidates for
+    removing from the alignment.

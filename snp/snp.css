@@ -1,0 +1,63 @@
+NP
+{
+	border-collapse: collapse;
+}
+
+	table.SNP td
+	{
+		padding: 2px;
+	}
+
+		table.SNP td.LEFT
+		{
+			font-weight: bold;
+			padding-left: 16px;
+			padding-right: 16px;
+		}
+	
+	table.SNP tr th
+	{
+		text-align: center;
+		color: black;
+	}
+
+		table.SNP tr th.DISTINGUISHABLE
+		{
+			color: green;
+			background-color: lightgreen;
+		}
+	
+	table.SNP tr.SELECTED td
+	{
+		background-color: #CCCCCC;
+	}
+
+	table.SNP div.MAJOR
+	{
+		width: 32px;
+		height: 32px;
+		margin: 4px;
+		background-color: blue;
+		border-radius: 5px;
+		border: 3px solid transparent;
+	}
+
+	table.SNP div.MINOR
+	{
+		width: 32px;
+		height: 32px;
+		margin: 4px;
+		background-color: red;
+		border-radius: 5px;
+		border: 3px solid transparent;
+	}
+
+	table.SNP div.DISTINGUISHABLE
+	{
+		border: 3px solid yellow;
+	}
+	
+	table.SNP div.INDISTINGUISHABLE
+	{
+		border: 3px solid black;
+	}
