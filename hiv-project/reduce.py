@@ -84,7 +84,6 @@ for i in r:
 if end:
     drop.append(xrange(0, end))
 
-<<<<<<< HEAD
 # Determine length of dropped positions
 
 len = 0
@@ -101,7 +100,6 @@ for item in sorted(listdir(FASTA_PATH)):
     elif isfile(join(FASTA_PATH, item)) and item.endswith(".consensus"):
         reduceToFile(item)
 
-=======
 # Drop alignment ranges in extended FASTA files.
 
 for item in sorted(listdir(FASTA_PATH)):
@@ -125,4 +123,3 @@ for item in sorted(listdir(FASTA_PATH)):
                 # Write to .reduced file.
 
                 SeqIO.write(record, fout, "fasta") 
->>>>>>> 33799130924894831033a3111073e54dccfce20d
