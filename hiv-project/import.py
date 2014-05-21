@@ -73,5 +73,5 @@ for item in sorted(listdir(FASTA_PATH)):
 
 # Iterate through consensus summaries
 
-for record in SeqIO.parse(join(FASTA_PATH, "summary.consensus"), "fasta"):
+for record in SeqIO.parse(join(FASTA_PATH, "summary.consensus.reduced"), "fasta"):
     insert(True, record)

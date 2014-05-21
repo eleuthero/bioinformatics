@@ -46,13 +46,8 @@ def generateConsensusThreshold(summary, fsum, fout, threshold):
     SeqIO.write(consensus_rec, fsum, "fasta")
 
 def generateConsensus(summary, fsum, fout):
-    generateConsensusThreshold(summary, fsum, fout, 1.00)
-    generateConsensusThreshold(summary, fsum, fout, 0.95)
-    generateConsensusThreshold(summary, fsum, fout, 0.90)
-    generateConsensusThreshold(summary, fsum, fout, 0.85)
-    generateConsensusThreshold(summary, fsum, fout, 0.80)
-    generateConsensusThreshold(summary, fsum, fout, 0.75)
-    generateConsensusThreshold(summary, fsum, fout, 0.70)
+    for cvalue in range(7, 11):
+        generateConsensusThreshold(summary, fsum, fout, float(cvalue) / 10)
 
 # =========
 # Main

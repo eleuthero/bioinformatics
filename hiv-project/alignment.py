@@ -12,7 +12,7 @@ records = list();
 # Read all sequence records into a single list.
 
 for item in sorted(listdir(FASTA_PATH)):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
+    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended.reduced"):
         records.extend(SeqIO.parse(join(FASTA_PATH, item), "fasta"))
 
 # Find maximum sequence length.
@@ -25,7 +25,7 @@ population = [0 for i in range(maxlen)]
 
 for record in records:
     for i in range(len(record.seq)):
-        if record.seq[i] != '-':
+        if record.seq[i] not in ['N', '-']:
             population[i] += 1
 
 print """
@@ -56,7 +56,7 @@ for i in range((maxlen / ROWLEN) + 1):
         k = i * ROWLEN + j
         if k < maxlen:
             if population[k] > 99:
-                print "<td class='A OK' title='", k, "'>OK</td>"
+                print "<td class='A OK' title='position: %i, population: %i'>OK</td>" % (k, population[k])
             else:
 
                 css = None
