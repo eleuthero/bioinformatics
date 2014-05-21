@@ -84,6 +84,7 @@ for i in r:
 if end:
     drop.append(xrange(0, end))
 
+<<<<<<< HEAD
 # Determine length of dropped positions
 
 len = 0
@@ -100,3 +101,28 @@ for item in sorted(listdir(FASTA_PATH)):
     elif isfile(join(FASTA_PATH, item)) and item.endswith(".consensus"):
         reduceToFile(item)
 
+=======
+# Drop alignment ranges in extended FASTA files.
+
+for item in sorted(listdir(FASTA_PATH)):
+    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
+        with open(join(FASTA_PATH, item) + ".reduced", "w") as fout:
+            for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
+
+                # Create mutable sequence from record.
+
+                mseq = record.seq.tomutable()
+
+                # Remove each xrange from sequence.
+
+                for xr in drop:
+                    mseq[min(xr) : max(xr) + 1] = ''
+
+                # Update record sequence (preserves id, description, etc.)
+
+                record.seq = mseq.toseq()
+
+                # Write to .reduced file.
+
+                SeqIO.write(record, fout, "fasta") 
+>>>>>>> 33799130924894831033a3111073e54dccfce20d

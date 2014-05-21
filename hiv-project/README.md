@@ -9,8 +9,8 @@ year to find conserved sections of the genome.
 The file hiv-db-ALL.fasta contains the 1,100 source sequences from
 which the scripts start work.
 
-To prepare data automatically, just run ``make all'' on the script
-directory.  Run ``make clean'' to clean up.  The makefile will call
+To prepare data automatically, just run ``make all`` on the script
+directory.  Run ``make clean`` to clean up.  The makefile will call
 the following scripts:
 
 1.  The script process.py processes the source file, creating a
