@@ -56,22 +56,22 @@ if end:
 
 for item in sorted(listdir(FASTA_PATH)):
     if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
-        for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
+        with open(join(FASTA_PATH, item) + ".reduced", "w") as fout:
+            for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
 
-            # Create mutable sequence from record.
+                # Create mutable sequence from record.
 
-            mseq = record.seq.tomutable()
+                mseq = record.seq.tomutable()
 
-            # Remove each xrange from sequence.
+                # Remove each xrange from sequence.
 
-            for xr in drop:
-                mseq[min(xr) : max(xr) + 1] = ''
+                for xr in drop:
+                    mseq[min(xr) : max(xr) + 1] = ''
 
-            # Update record sequence (preserves id, description, etc.)
+                # Update record sequence (preserves id, description, etc.)
 
-            record.seq = mseq.toseq()
+                record.seq = mseq.toseq()
 
-            # Write to .reduced file.
+                # Write to .reduced file.
 
-            with open(join(FASTA_PATH, item) + ".reduced", "w") as fout:
                 SeqIO.write(record, fout, "fasta") 
