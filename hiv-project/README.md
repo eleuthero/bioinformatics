@@ -3,8 +3,8 @@ The scripts in this directory generate a multiple alignment across
 all complete HIV-1 subtype B genomes in the LANL HIV genomic database
 taken between the years of 1980 and 2014 in the United States.  A
 complete alignment is established across all samples, about 1,100 at
-the time of writing, and generates 100% consensus sequences for each
-year to find conserved sections of the genome.
+the time of writing, and generates consensus sequences of varying
+thresholds for each year to find conserved sections of the genome.
 
 The file hiv-db-ALL.fasta contains the 1,100 source sequences from
 which the scripts start work.
@@ -16,6 +16,15 @@ the following scripts:
 1.  The script process.py processes the source file, creating a
     "sequences" subdirectory and partitioning the samples in the
     source file by year.
+
+    This script also prevents more than one sequence from any single
+    patient from being included in any year.  This is necessary
+    because some patients have many sequences listed in a given year
+    and their presence can bias the consensus sequence for that
+    year.  Since the patient information is not generally deducible
+    in the sequence header, we need to consult a patient_info.txt
+    file that connects the accession ID of each sequence to the
+    patient code and year the sample was sequenced.
 
 2.  The script consensus.py determines the longest aligned 
     sequence in the collection and extends all sequences to that
@@ -50,29 +59,29 @@ the following scripts:
 
 Key to generated files:
 
-    sequences/YYYY.fasta:
+    ./sequences/YYYY.fasta:
     Contains all sequences from year YYYY extracted from source HIV data.
 
-    sequences/YYYY.fasta.extended:
+    ./sequences/YYYY.fasta.extended:
     Contains all sequences in YYYY.fasta extended to a global alignment
     (all years, not just year YYYY).
 
-    sequences/YYYY.fasta.extended.consensus:
+    ./sequences/YYYY.fasta.extended.consensus:
     70%, 80%, 90%, 100% consensus sequences for all sequences in
     YYYY.fasta.extended.
 
-    sequences/YYYY.fasta.extended.reduced: 
+    ./sequences/YYYY.fasta.extended.reduced: 
     Contains all sequences in YYYY.fasta.extended, but with poorly-covered
     alignment sequences removed.
 
-    sequences/YYYY.fasta.extended.consensus.reduced:
+    ./sequences/YYYY.fasta.extended.consensus.reduced:
     Contains all sequences in YYYY.fasta.extended.consensus, but with
     poorly-covered alignment segments removed.
 
-    sequences/summary.consensus:
+    ./sequences/summary.consensus:
     Contains all sequences in YYYY.fasta.extended.consensus for all years.
 
-    sequences/summary.consensus.reduced:
+    ./sequences/summary.consensus.reduced:
     Contains all sequences in summary.consensus, but with poorly-covered
     alignment segments removed.
 
