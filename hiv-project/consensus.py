@@ -9,7 +9,16 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Align     import AlignInfo
 from Bio.Alphabet  import generic_dna
 
+# Path to sequence directory.
+
 FASTA_PATH = "./sequences/"
+
+# When there are at least this many sequences for a year, generate
+# 70% ~ 100% threshold dumb consensus sequences for the year.  If
+# there are fewer this number, a single, simple majority consensus
+# will be generated.
+
+THRESHOLD = 10
 
 global regex
 
@@ -87,13 +96,21 @@ fsum = open(join(FASTA_PATH, "summary.consensus"), "w")
 
 for item in sorted(listdir(FASTA_PATH)):
     if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
+        seqcount = len( SeqIO.index(join(FASTA_PATH, item), "fasta") )
         alignment = AlignIO.read(join(FASTA_PATH, item), "fasta")
         summary = AlignInfo.SummaryInfo(alignment)
 
         fout = open(join(FASTA_PATH, item) + ".consensus", "w")
         year = getYear(item)
 
-        generateConsensus(summary, fsum, fout)
+        if seqcount >= THRESHOLD:
+            generateConsensus(summary, fsum, fout)
+        else:
+
+            # Generate a majority consensus; there aren't enough sequences
+            # to justify the granularity of multiple consensus sequences.
+
+            generateConsensusThreshold(summary, fsum, fout, 0.5)
 
         fout.close()
 
