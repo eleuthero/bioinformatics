@@ -5,8 +5,9 @@ taken between the years of 1980 and 2014 in the United States.  A
 complete alignment is established across all samples, about 1,110 at
 the time of writing, and generates consensus sequences of varying
 thresholds for each year to find conserved sections of the genome.
-At present, the analysis is performed on subtypes B and C, but it
-is easy to add support for other subtypes.
+At present, the analysis is performed on subtypes B and C sampled
+in the United States, but it is easy to add support for other
+subtypes.
 
 The source files, acquired from the LANL HIV genomic database, are:
 
