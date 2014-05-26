@@ -1,13 +1,28 @@
 
 The scripts in this directory generate a multiple alignment across
-all complete HIV-1 subtype B genomes in the LANL HIV genomic database
+all complete HIV-1 genomes in the LANL HIV genomic database
 taken between the years of 1980 and 2014 in the United States.  A
-complete alignment is established across all samples, about 1,100 at
+complete alignment is established across all samples, about 1,110 at
 the time of writing, and generates consensus sequences of varying
 thresholds for each year to find conserved sections of the genome.
+At present, the analysis is performed on subtypes B and C, but it
+is easy to add support for other subtypes.
 
-The file hiv-db-ALL.fasta contains the 1,100 source sequences from
-which the scripts start work.
+The source files, acquired from the LANL HIV genomic database, are:
+
+    ./sequences_B.fasta
+    All complete genomic sequences for HIV-1 subtype B.
+
+    ./sequences_C.fasta
+    All complete genomic sequences for HIV-1 subtype C.
+
+    ./patients_B.txt
+    All patient information corresponding to the sequences for
+    subtype B. 
+
+    ./patients_C.txt
+    All patient information corresponding to the sequences for
+    subtype C. 
 
 To prepare data automatically, just run ``make all`` on the script
 directory.  Run ``make clean`` to clean up.  The makefile will call

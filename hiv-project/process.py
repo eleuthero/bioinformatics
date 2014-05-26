@@ -7,8 +7,7 @@ from os import path
 SOURCES = [ { 'subtype':   'B',
               'sequences': './sequences_B.fasta',
               'patient':   './patients_B.txt' },
-
-              'subtype':   'C',
+            { 'subtype':   'C',
               'sequences': './sequences_C.fasta',
               'patient':   './patients_C.txt' } ]
             
