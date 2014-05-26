@@ -1,6 +1,5 @@
 PYTHON=/usr/bin/python
 OUTFILE=schema/hiv_data.sql
-MAPFILE=alignment_map.html
 THRESHOLD=1
 
 all:
@@ -9,8 +8,9 @@ all:
 	$(PYTHON) ./consensus.py
 	$(PYTHON) ./reduce.py $(THRESHOLD)
 	$(PYTHON) ./import.py > $(OUTFILE)
-	$(PYTHON) ./alignment.py > $(MAPFILE)
+	$(PYTHON) ./alignment.py
 
 clean:
 	rm -f $(OUTFILE) $(MAPFILE)
+	rm -f "./alignment*.html"
 	rm -rf ./sequences	

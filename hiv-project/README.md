@@ -26,6 +26,9 @@ the following scripts:
     file that connects the accession ID of each sequence to the
     patient code and year the sample was sequenced.
 
+    The script supports analysis of multiple subtypes, but at present
+    only subtype B is analyzed.
+
 2.  The script consensus.py determines the longest aligned 
     sequence in the collection and extends all sequences to that
     length by padding them on the left with dashes.  This makes all
@@ -60,33 +63,37 @@ the following scripts:
 
 Key to generated files:
 
-    ./sequences/YYYY.fasta:
-    Contains all sequences from year YYYY extracted from source HIV data.
+    ./sequences/SSSS:
+    Contains all generated analysis for subtype SSSS.
 
-    ./sequences/YYYY.fasta.extended:
-    Contains all sequences in YYYY.fasta extended to a global alignment
-    (all years, not just year YYYY).
+    ./sequences/SSSS/YYYY.fasta:
+    Contains all sequences from year YYYY and subtype SSSS extracted from
+    source HIV data.
 
-    ./sequences/YYYY.fasta.extended.consensus:
+    ./sequences/SSSS/YYYY.fasta.extended:
+    Contains all sequences in YYYY.fasta and subtype SSSS extended to a
+    global alignment (all years for subtype SSSS, not just year YYYY).
+
+    ./sequences/SSSS/YYYY.fasta.extended.consensus:
     70%, 80%, 90%, 100% consensus sequences for all sequences in
     YYYY.fasta.extended.
 
-    ./sequences/YYYY.fasta.extended.reduced: 
+    ./sequences/SSSS/YYYY.fasta.extended.reduced: 
     Contains all sequences in YYYY.fasta.extended, but with poorly-covered
     alignment sequences removed.
 
-    ./sequences/YYYY.fasta.extended.consensus.reduced:
+    ./sequences/SSSS/YYYY.fasta.extended.consensus.reduced:
     Contains all sequences in YYYY.fasta.extended.consensus, but with
     poorly-covered alignment segments removed.
 
-    ./sequences/summary.consensus:
+    ./sequences/SSSS/summary.consensus:
     Contains all sequences in YYYY.fasta.extended.consensus for all years.
 
-    ./sequences/summary.consensus.reduced:
+    ./sequences/SSSS/summary.consensus.reduced:
     Contains all sequences in summary.consensus, but with poorly-covered
     alignment segments removed.
 
-    ./alignment_map.html:
+    ./alignment_SSSS.html:
     Contains a "heat map" of the number of reduced sequences (all sequences
     from YYYY.fasta.extended.reduced for all years) that participate at
     every index in the global alignment.  Originally, this was an attempt

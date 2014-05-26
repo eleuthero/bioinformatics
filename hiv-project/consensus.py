@@ -2,7 +2,7 @@
 
 import re
 from os            import listdir
-from os.path       import isfile, join
+from os.path       import isfile, isdir, join
 from Bio           import SeqIO, AlignIO
 from Bio.Seq       import Seq
 from Bio.SeqRecord import SeqRecord
@@ -11,7 +11,7 @@ from Bio.Alphabet  import generic_dna
 
 # Path to sequence directory.
 
-FASTA_PATH = "./sequences/"
+SEQUENCE_DIR = "./sequences/"
 
 # When there are at least this many sequences for a year, generate
 # 70% ~ 100% threshold dumb consensus sequences for the year.  If
@@ -40,8 +40,7 @@ def getYear(line):
     else:
         return 0
 
-def generateConsensusThreshold(summary, fsum, fout, threshold):
-
+def generateConsensusThreshold(subtype, summary, fsum, fout, threshold):
     consensus_seq = Seq(str(summary.dumb_consensus(threshold = threshold,
                                                    ambiguous = 'N',
                                                    require_multiple = 1)),
@@ -49,69 +48,73 @@ def generateConsensusThreshold(summary, fsum, fout, threshold):
 
     consensus_rec = SeqRecord(consensus_seq,
                               id="",
-                              description=(".%s.%i%%.Consensus" % (year, 100 * threshold)))
-
+                              description=("%s.%s.%i%%.Consensus" % (subtype,
+                                                                     year,
+                                                                     100 * threshold)))
     SeqIO.write(consensus_rec, fout, "fasta")
     SeqIO.write(consensus_rec, fsum, "fasta")
 
-def generateConsensus(summary, fsum, fout):
+def generateConsensus(subtype, summary, fsum, fout):
     for cvalue in range(7, 11):
-        generateConsensusThreshold(summary, fsum, fout, float(cvalue) / 10)
+        generateConsensusThreshold(subtype, summary, fsum, fout, float(cvalue) / 10)
 
 # =========
 # Main
 # =========
 
-# Determine length of longest aligned sequence
+for subtype in listdir(SEQUENCE_DIR):
+    if isdir(join(SEQUENCE_DIR, subtype)):
 
-for item in listdir(FASTA_PATH):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta"):
-        for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
-            # print "%s - %s" % (record.id, len(record.seq))
-            if len(record.seq) > maxseq:
-                maxseq = len(record.seq)
+        print "Processing sequences for subtype %s..." % subtype 
 
-print "Longest sequence length: %i" % maxseq 
+        # Determine length of longest aligned sequences per subtype.
 
-# Extend all sequences to length of longest aligned sequence
-# by adding - to the ends of them.
+        path = join(SEQUENCE_DIR, subtype)
+        for item in listdir(path):
+            if isfile(join(path, item)) and item.endswith(".fasta"):
+                for record in SeqIO.parse(join(path, item), "fasta"):
+                    if len(record.seq) > maxseq:
+                        maxseq = len(record.seq)
 
-for item in listdir(FASTA_PATH):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta"):
+        print "Longest sequence length: %i" % maxseq 
 
-        fout = open(join(FASTA_PATH, item) + ".extended", "w")
+        # Extend all sequences for this subtype to length of longest
+        # aligned sequence by adding - to the ends of them.
 
-        for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
-            record.seq += ("-" * (maxseq - len(record.seq)))
-            SeqIO.write(record, fout, "fasta")
+        for item in listdir(path):
+            if isfile(join(path, item)) and item.endswith(".fasta"):
+                with open(join(path, item) + ".extended", "w") as fout:
+                    for record in SeqIO.parse(join(path, item), "fasta"):
+                        record.seq += ("-" * (maxseq - len(record.seq)))
+                        SeqIO.write(record, fout, "fasta")
 
-        fout.close()
-            
-print "Extended all sequences to %i residues." % maxseq
+        print "Extended all sequences to %i residues." % maxseq
 
-# Generate consensus sequences for each year and a
-# consensus summary file.
+        # Generate consensus sequences for each year and a
+        # consensus summary file.
 
-fsum = open(join(FASTA_PATH, "summary.consensus"), "w")
+        with open(join(path, "summary.consensus"), "w") as fsum:
+            for item in sorted(listdir(path)):
+                if isfile(join(path, item)) and item.endswith(".fasta.extended"):
 
-for item in sorted(listdir(FASTA_PATH)):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
-        seqcount = len( SeqIO.index(join(FASTA_PATH, item), "fasta") )
-        alignment = AlignIO.read(join(FASTA_PATH, item), "fasta")
-        summary = AlignInfo.SummaryInfo(alignment)
+                    # Determine number of sequences for this year.
 
-        fout = open(join(FASTA_PATH, item) + ".consensus", "w")
-        year = getYear(item)
+                    seqcount = len( SeqIO.index(join(path, item), "fasta") )
 
-        if seqcount >= THRESHOLD:
-            generateConsensus(summary, fsum, fout)
-        else:
+                    # Get alignment summary.  This will be required for us
+                    # to generate a dumb n% consensus.
 
-            # Generate a majority consensus; there aren't enough sequences
-            # to justify the granularity of multiple consensus sequences.
+                    alignment = AlignIO.read(join(path, item), "fasta")
+                    summary = AlignInfo.SummaryInfo(alignment)
 
-            generateConsensusThreshold(summary, fsum, fout, 0.5)
+                    with open(join(path, item) + ".consensus", "w") as fout:
+                        year = getYear(item)
 
-        fout.close()
+                        if seqcount >= THRESHOLD:
+                            generateConsensus(subtype, summary, fsum, fout)
+                        else:
 
-fsum.close()
+                            # Generate a majority consensus; there aren't enough sequences
+                            # to justify the granularity of multiple consensus sequences.
+
+                            generateConsensusThreshold(subtype, summary, fsum, fout, 0.5)

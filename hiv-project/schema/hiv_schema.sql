@@ -7,6 +7,10 @@ CREATE TABLE `sequence`
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
+	`subtype`
+		VARCHAR(16)
+		NOT NULL
+		DEFAULT '',
 	`year`
 		INT
 		NOT NULL,

@@ -2,12 +2,12 @@
 
 import re
 from os            import listdir
-from os.path       import isfile, join
+from os.path       import isfile, isdir, join
 from Bio           import SeqIO
 from Bio.Seq       import Seq
 from Bio.SeqRecord import SeqRecord
 
-FASTA_PATH = "./sequences/"
+SEQUENCE_DIR = "./sequences/"
 
 global yregex
 global tregex
@@ -42,23 +42,25 @@ def getThreshold(line):
         return 0
     
 # Insert a sequence into the database.
-def insert(consensus, record):
+def insert(consensus, subtype, record):
 
     year = getYear(record.description)
 
     if consensus:
-        print "INSERT INTO `sequence` (`year`, `consensus`, `threshold`, `description`, `sequence`) " \
-              "VALUES ('%s', %s, %.2f, '%s', '%s');" % (getYear(record.description),
-                                                        str(consensus),
-                                                        getThreshold(record.description),
-                                                        record.description,
-                                                        record.seq)
+        print "INSERT INTO `sequence` (`year`, `consensus`, `threshold`, `subtype`, `description`, `sequence`) " \
+              "VALUES ('%s', %s, %.2f, '%s', '%s', '%s');" % (getYear(record.description),
+                                                              str(consensus),
+                                                              getThreshold(record.description),
+                                                              subtype,
+                                                              record.description,
+                                                              record.seq)
     else:
-        print "INSERT INTO `sequence` (`year`, `consensus`, `threshold`, `description`, `sequence`) " \
-              "VALUES ('%s', %s, NULL, '%s', '%s');" % (getYear(record.description),
-                                                        str(consensus),
-                                                        record.description,
-                                                        record.seq)
+        print "INSERT INTO `sequence` (`year`, `consensus`, `threshold`, `subtype`, `description`, `sequence`) " \
+              "VALUES ('%s', %s, NULL, '%s', '%s', '%s');" % (getYear(record.description),
+                                                              str(consensus),
+                                                              subtype,
+                                                              record.description,
+                                                              record.seq)
 
 # =========
 # Main 
@@ -66,12 +68,16 @@ def insert(consensus, record):
 
 # Iterate through individual sequences
 
-for item in sorted(listdir(FASTA_PATH)):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta"):
-        for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
-            insert(False, record)
+for subtype in listdir(SEQUENCE_DIR):
+    if isdir(join(SEQUENCE_DIR, subtype)):
 
-# Iterate through consensus summaries
+        path = join(SEQUENCE_DIR, subtype)
+        for item in sorted(listdir(path)):
+            if isfile(join(path, item)) and item.endswith(".fasta"):
+                for record in SeqIO.parse(join(path, item), "fasta"):
+                    insert(False, subtype, record)
 
-for record in SeqIO.parse(join(FASTA_PATH, "summary.consensus.reduced"), "fasta"):
-    insert(True, record)
+        # Iterate through consensus summaries
+
+        for record in SeqIO.parse(join(path, "summary.consensus.reduced"), "fasta"):
+            insert(True, subtype, record)

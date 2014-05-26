@@ -5,21 +5,21 @@
 
 import sys
 from os            import listdir
-from os.path       import isfile, join
+from os.path       import isfile, isdir, join
 from Bio           import Seq, SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq       import MutableSeq
 
-FASTA_PATH = "./sequences/"
-THRESHOLD  = int(sys.argv[1]) if (len(sys.argv) >= 2) else 10
+SEQUENCE_DIR = "./sequences/"
+THRESHOLD = int(sys.argv[1]) if (len(sys.argv) >= 2) else 1
 
 # =========
 # Functions
 # =========
 
-def reduceToFile(item):
-    with open(join(FASTA_PATH, item) + ".reduced", "w") as fout:
-        for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
+def reduceToFile(path, item):
+    with open(join(path, item) + ".reduced", "w") as fout:
+        for record in SeqIO.parse(join(path, item), "fasta"):
 
             # Create mutable sequence from record.
 
@@ -43,84 +43,89 @@ def reduceToFile(item):
 # Main
 # ====
 
-print "Dropping all alignment positions with fewer than %i contributors..." % (THRESHOLD)
+for dir in listdir(SEQUENCE_DIR):
+    if isdir(join(SEQUENCE_DIR, dir)):
 
-records = list();
+        print "Reducing sequences for subtype %s..." % dir
+        print "Dropping all alignment positions with fewer than %i contributors..." % (THRESHOLD)
 
-# Read all sequence records into a single list.
+        path = join(SEQUENCE_DIR, dir)
+        records = list();
 
-for item in sorted(listdir(FASTA_PATH)):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended.consensus"):
-        records.extend(SeqIO.parse(join(FASTA_PATH, item), "fasta"))
+        # Read all sequence records into a single list.
 
-# Find maximum sequence length.
+        for item in sorted(listdir(path)):
+            if isfile(join(path, item)) and item.endswith(".fasta.extended.consensus"):
+                records.extend(SeqIO.parse(join(path, item), "fasta"))
 
-maxlen = max( map(lambda item: len(item.seq), records) )
+        # Find maximum sequence length.
 
-# Find the number of sequences with a residue at the ith location.
+        maxlen = max( map(lambda item: len(item.seq), records) )
 
-population = [0 for i in range(maxlen)]
+        # Find the number of sequences with a residue at the ith location.
 
-for record in records:
-    for i in range(len(record.seq)):
-        if record.seq[i] != 'N':
-            population[i] += 1
+        population = [0 for i in range(maxlen)]
 
-# Determine alignment ranges to drop based on the supplied threshold.
+        for record in records:
+            for i in range(len(record.seq)):
+                if record.seq[i] != 'N':
+                    population[i] += 1
 
-drop = list()
-end = None
-r = range(len(population))
-r.reverse();
+        # Determine alignment ranges to drop based on the supplied threshold.
 
-for i in r:
-    if population[i] < THRESHOLD:
-        if not end:
-            end = i + 1
-    elif population[i] >= THRESHOLD:
+        drop = list()
+        end = None
+        r = range(len(population))
+        r.reverse();
+
+        for i in r:
+            if population[i] < THRESHOLD:
+                if not end:
+                    end = i + 1
+            elif population[i] >= THRESHOLD:
+                if end:
+                    drop.append(xrange(i, end))
+                    end = None
         if end:
-            drop.append(xrange(i, end))
-            end = None
-if end:
-    drop.append(xrange(0, end))
+            drop.append(xrange(0, end))
 
-# Determine length of dropped positions
+        # Determine length of dropped positions
 
-len = 0
-for xr in drop:
-    len += (max(xr) - min(xr) + 1)
+        dlen = 0
+        for xr in drop:
+            dlen += (max(xr) - min(xr) + 1)
 
-print "Dropping %i of %i alignment positions." % (len, maxlen)
-print "New global alignment size: %i." % (maxlen - len)
+        print "Dropping %i of %i alignment positions." % (dlen, maxlen)
+        print "New global alignment size: %i." % (maxlen - dlen)
 
-# Drop alignment ranges in extended FASTA files.
+        # Drop alignment ranges in extended FASTA files.
 
-for item in sorted(listdir(FASTA_PATH)):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".extended"):
-        reduceToFile(item)
-    elif isfile(join(FASTA_PATH, item)) and item.endswith(".consensus"):
-        reduceToFile(item)
+        for item in sorted(listdir(path)):
+            if isfile(join(path, item)) and item.endswith(".extended"):
+                reduceToFile(path, item)
+            elif isfile(join(path, item)) and item.endswith(".consensus"):
+                reduceToFile(path, item)
 
-# Drop alignment ranges in extended FASTA files.
+        # Drop alignment ranges in extended FASTA files.
 
-for item in sorted(listdir(FASTA_PATH)):
-    if isfile(join(FASTA_PATH, item)) and item.endswith(".fasta.extended"):
-        with open(join(FASTA_PATH, item) + ".reduced", "w") as fout:
-            for record in SeqIO.parse(join(FASTA_PATH, item), "fasta"):
+        for item in sorted(listdir(path)):
+            if isfile(join(path, item)) and item.endswith(".fasta.extended"):
+                with open(join(path, item) + ".reduced", "w") as fout:
+                    for record in SeqIO.parse(join(path, item), "fasta"):
 
-                # Create mutable sequence from record.
+                        # Create mutable sequence from record.
 
-                mseq = record.seq.tomutable()
+                        mseq = record.seq.tomutable()
 
-                # Remove each xrange from sequence.
+                        # Remove each xrange from sequence.
 
-                for xr in drop:
-                    mseq[min(xr) : max(xr) + 1] = ''
+                        for xr in drop:
+                            mseq[min(xr) : max(xr) + 1] = ''
 
-                # Update record sequence (preserves id, description, etc.)
+                        # Update record sequence (preserves id, description, etc.)
 
-                record.seq = mseq.toseq()
+                        record.seq = mseq.toseq()
 
-                # Write to .reduced file.
+                        # Write to .reduced file.
 
-                SeqIO.write(record, fout, "fasta") 
+                        SeqIO.write(record, fout, "fasta") 

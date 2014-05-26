@@ -4,18 +4,18 @@ import os
 import re
 from os import path
 
-PATIENTINFO_PATH  = "./patient_info.txt"
-SEQUENCEINFO_PATH = "./hiv-db-ALL.fasta"
-SEQUENCE_DIR      = "./sequences"
+SOURCES = [ { 'subtype':   'B',
+              'sequences': './sequences_B.fasta',
+              'patient':   './patients_B.txt' } ]
+            
+SEQUENCE_DIR = "./sequences"
 
 # =========
 # Functions
 # =========
 
-def getPatientInfo():
-    global PATIENTINFO_PATH
-
-    with open(PATIENTINFO_PATH) as fin:
+def getPatientInfo(path):
+    with open(path) as fin:
         infos = fin.readlines()    
 
     l = [ ]
@@ -45,18 +45,28 @@ def getSequenceInfo(line):
              'name'      : tokens[3],
              'accession' : tokens[4] }
 
-def partitionSequencesByYear():
-    global SEQUENCEINFO_PATH
+def getSequenceFileName(subtype, year):
     global SEQUENCE_DIR
+
+    return "%s/%s/%i.fasta" % (SEQUENCE_DIR, subtype, year)
+    
+def partitionSequencesByYear(source):
+    global SEQUENCE_DIR
+
+    subtype = source['subtype']
 
     # Ensure sequences output directory exists.
 
     if not os.path.exists(SEQUENCE_DIR):
         os.mkdir(SEQUENCE_DIR)
+    if not os.path.exists(SEQUENCE_DIR + '/' + subtype):
+        os.mkdir(SEQUENCE_DIR + '/' + subtype)
+
+    print "Processing sequences for subtype %s." % subtype
 
     # Open sequence file.
 
-    with open(SEQUENCEINFO_PATH) as fin:
+    with open(source['sequences']) as fin:
         lines = fin.readlines()
 
     fyear = 0
@@ -67,7 +77,7 @@ def partitionSequencesByYear():
 
     # Get patient info.
 
-    ptinfos = getPatientInfo()
+    ptinfos = getPatientInfo(source['patient'])
 
     # Track patients per year; we do not want to include more than one
     # sequence from any one patient for a given year.
@@ -100,7 +110,7 @@ def partitionSequencesByYear():
                     seqs_skipped += 1
 
                     print "Skipping sequence with corrupted description %s." % line.strip()
-                    # print "Closing file %s/%i.fasta" % (SEQUENCE_DIR, fyear)
+                    # print "Closing file %s" % getSequenceFileName(subtype, fyear)
                     fout.close()
 
                     # Restart loop to keep logic simple,
@@ -117,7 +127,7 @@ def partitionSequencesByYear():
 
                         if fout:
                             if not fout.closed:
-                                # print "Closing file %s/%i.fasta" % (SEQUENCE_DIR, fyear)
+                                # print "Closing file %s" % getSequenceFileName(subtype, fyear)
                                 fout.close()
 
                         # print "Skipping patient %s for year %i." % (ptinfo['patientid'],
@@ -144,7 +154,7 @@ def partitionSequencesByYear():
                 if (year != fyear):
                     if fout:
                         if not fout.closed:
-                            # print "Closing file %s/%i.fasta" % (SEQUENCE_DIR, fyear)
+                            # print "Closing file %s" % getSequenceFileName(subtype, fyear)
                             fout.close()
 
                 fyear = year
@@ -153,7 +163,7 @@ def partitionSequencesByYear():
 
                 if (not fout) or fout.closed:
 
-                    filename = "%s/%i.fasta" % (SEQUENCE_DIR, fyear)
+                    filename = getSequenceFileName(subtype, fyear)
                     # print "Opening file %s" % filename
                     fout = open(filename, "a")
 
@@ -166,7 +176,7 @@ def partitionSequencesByYear():
 
     if fout:
         if not fout.closed:
-            # print "Closing file %s/%i.fasta" % (SEQUENCE_DIR, fyear)
+            # print "Closing file %s" % getSequenceFileName(subtype, fyear)
             fout.close()
 
     print "%i of %i sequences written (%i skipped)." % (seqs_written,
@@ -177,4 +187,5 @@ def partitionSequencesByYear():
 # Main
 # ====
 
-partitionSequencesByYear()
+for source in SOURCES:
+    partitionSequencesByYear(source)
