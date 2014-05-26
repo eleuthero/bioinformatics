@@ -38,7 +38,8 @@ the following scripts:
     calculates how many of those sequences contribute to the extended
     alignment at every position.  For every position in the extended
     alignment for which fewer than some number of sequences (default
-    10) contribute to the extended alignment, that position of the 
+    is 1, based on the number and structure of remaining sequences)
+    contribute to the extended alignment, that position of the 
     alignment will be deleted from all consensus sequences.  The reason
     for this is that, for the inital 1,100 sequences, the extended
     alignment was 12,526bp, which made it difficult to reconcile the

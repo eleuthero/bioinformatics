@@ -1,7 +1,7 @@
 PYTHON=/usr/bin/python
 OUTFILE=schema/hiv_data.sql
 MAPFILE=alignment_map.html
-THRESHOLD=10
+THRESHOLD=1
 
 all:
 	mkdir ./sequences

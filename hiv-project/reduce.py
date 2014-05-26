@@ -90,7 +90,8 @@ len = 0
 for xr in drop:
     len += (max(xr) - min(xr) + 1)
 
-print "Dropping %i of %i alignment positions..." % (len, maxlen)
+print "Dropping %i of %i alignment positions." % (len, maxlen)
+print "New global alignment size: %i." % (maxlen - len)
 
 # Drop alignment ranges in extended FASTA files.
 
