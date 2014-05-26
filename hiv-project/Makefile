@@ -12,5 +12,5 @@ all:
 
 clean:
 	rm -f $(OUTFILE) $(MAPFILE)
-	rm -f "./alignment*.html"
+	rm -f "./alignment_*.html"
 	rm -rf ./sequences	
