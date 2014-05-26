@@ -65,7 +65,7 @@ def partitionSequencesByYear(source):
     if not os.path.exists(SEQUENCE_DIR + '/' + subtype):
         os.mkdir(SEQUENCE_DIR + '/' + subtype)
 
-    print "Processing sequences for subtype %s." % subtype
+    print "Partitioning sequences for subtype %s..." % subtype
 
     # Open sequence file.
 
@@ -113,10 +113,10 @@ def partitionSequencesByYear(source):
                     seqs_skipped += 1
 
                     print "Skipping sequence with corrupted description %s." % line.strip()
-                    # print "Closing file %s" % getSequenceFileName(subtype, fyear)
+                    # print "Closing file %s." % getSequenceFileName(subtype, fyear)
                     fout.close()
 
-                    # Restart loop to keep logic simple,
+                    # Restart loop to keep logic simple.
 
                     continue
                     
@@ -130,13 +130,13 @@ def partitionSequencesByYear(source):
 
                         if fout:
                             if not fout.closed:
-                                # print "Closing file %s" % getSequenceFileName(subtype, fyear)
+                                # print "Closing file %s." % getSequenceFileName(subtype, fyear)
                                 fout.close()
 
                         # print "Skipping patient %s for year %i." % (ptinfo['patientid'],
                         #                                             year)
 
-                        # Restart loop to keep logic simple,
+                        # Restart loop to keep logic simple.
 
                         continue
 
@@ -145,6 +145,7 @@ def partitionSequencesByYear(source):
 
                 if not year in patients_by_year:
                     patients_by_year[year] = [ ]
+
                 patients_by_year[year].append(ptinfo['patientid'])
 
                 # print "Added patient %s to year %i." % (ptinfo['patientid'],
@@ -157,7 +158,7 @@ def partitionSequencesByYear(source):
                 if (year != fyear):
                     if fout:
                         if not fout.closed:
-                            # print "Closing file %s" % getSequenceFileName(subtype, fyear)
+                            # print "Closing file %s." % getSequenceFileName(subtype, fyear)
                             fout.close()
 
                 fyear = year
@@ -165,9 +166,8 @@ def partitionSequencesByYear(source):
                 # Do we need to open the current output file handle ?
 
                 if (not fout) or fout.closed:
-
                     filename = getSequenceFileName(subtype, fyear)
-                    # print "Opening file %s" % filename
+                    # print "Opening file %s." % filename
                     fout = open(filename, "a")
 
                 seqs_written += 1
@@ -177,10 +177,15 @@ def partitionSequencesByYear(source):
                 if not fout.closed:
                     fout.write(line)
 
+    # All done with sequences for this subtype.
+    # Is there still a file handle open ?
+
     if fout:
         if not fout.closed:
-            # print "Closing file %s" % getSequenceFileName(subtype, fyear)
+            # print "Closing file %s." % getSequenceFileName(subtype, fyear)
             fout.close()
+
+    # Summary.
 
     print "%i of %i sequences written (%i skipped)." % (seqs_written,
                                                         seqs_loaded,
