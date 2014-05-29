@@ -7,7 +7,7 @@ CREATE TABLE 'protein'
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
-	'fragment'
+	'feature'
 		VARCHAR(32)
 		NOT NULL,
 	'start'
@@ -15,5 +15,20 @@ CREATE TABLE 'protein'
 		DEFAULT NULL,
 	'stop'
 		INT
-		DEFAULT NULL
+		DEFAULT NULL,
+    'type'
+        VARCHAR(32)
+        DEFAULT NULL,
+    'category'
+        VARCHAR(32)
+        DEFAULT NULL,
+    'parent region'
+        VARCHAR(32)
+        DEFAULT NULL,
+    'reference'
+        VARCHAR(32)
+        DEFAULT NULL,
+    'note'
+        VARCHAR(32)
+        DEFAULT NULL
 );
