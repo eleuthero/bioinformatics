@@ -1,3 +1,13 @@
+################################################
+#Soundarya Rajendran
+#HIV Project
+#This is the file that creates a table, and uploads data from
+#a results.csv file with data downloaded online.
+#BIOFINFORMATICS : SPRING 2014 ; HIV MUTATION SEQUENCING PROJECT
+################################################
+
+
+
 import sys
 import csv
 import string
