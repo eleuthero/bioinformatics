@@ -25,12 +25,28 @@ def getPatientInfo(path):
 
     for info in infos:
         tokens = info.strip().split('\t')
-        if 12 == len(tokens):
-            if 'HIV-1' == tokens[11]:
+
+        if 'HIV-1' == tokens[-1]:
+            if 13 == len(tokens):
+
+                # Includes Georegion field as tokens[9].
+
                 i = { 'patientid' : tokens[2],
                       'accession' : tokens[3],
                       'year'      : int(tokens[7]) if tokens[7] else None } 
                 l.append(i)
+
+            elif 12 == len(tokens):
+
+                # Does not include Georegion field.
+
+                i = { 'patientid' : tokens[2],
+                      'accession' : tokens[3],
+                      'year'      : int(tokens[7]) if tokens[7] else None } 
+                l.append(i)
+
+    print "Loaded %i patient information records from %s." % (len(l),
+                                                              path)
     return l
 
 def getPatientInfoBySequence(ptinfos, seqinfo):
@@ -41,12 +57,26 @@ def getPatientInfoBySequence(ptinfos, seqinfo):
     return None
 
 def getSequenceInfo(line):
+
+    # The sequence description contains lots of useful information joined with periods.
+
     tokens = line[1:].strip().split('.')
-    return { 'subtype'   : tokens[0],
-             'country'   : tokens[1],
-             'year'      : int(tokens[2]) if tokens[2] else None,
-             'name'      : tokens[3],
-             'accession' : tokens[4] }
+
+    # Check to make sure that the year token is numeric; sometimes there is no year
+    # information (it's usually '-' in this case); we can't do anything without a year.
+
+    if not tokens[2].isdigit():
+        return None
+ 
+    # However, sometimes the name of the sequence itself contains periods too.
+    # We'll get around this by popping non-name tokens off of the sequence description
+    # and whatever's left we'll call the sequence name.
+
+    return { 'subtype'   : tokens.pop(0),
+             'country'   : tokens.pop(0),
+             'year'      : int( tokens.pop(0) ),
+             'accession' : tokens.pop(-1),         # Pop accession off of the end of list.
+             'name'      : '.'.join(tokens) }      # Whatever is left in the list is the name.
 
 def getSequenceFileName(subtype, year):
     global SEQUENCE_DIR
@@ -96,82 +126,96 @@ def partitionSequencesByYear(source):
             # Get sequence information.
 
             seqinfo = getSequenceInfo(line)
-            year = seqinfo['year']
 
-            # Is there a well-formed year in the sequence ?
+            # Check to see whether we successfully parsed the sequence information.
 
-            if not year:
+            if not seqinfo:
                 seqs_skipped += 1
 
-            else:
+                print "Skipping sequence with unparseable description %s." % line.strip()
 
-                # Get patient information from this accession id.
+                if fout:
+                    if not fout.closed:
+                        # print "Closing file %s." % getSequenceFileName(subtype, fyear)
+                        fout.close()
 
-                ptinfo = getPatientInfoBySequence(ptinfos, seqinfo)
+                # Restart loop to keep logic simple.
 
-                if not ptinfo:
+                continue
+            
+            year = seqinfo['year']
+
+            # Get patient information from this accession id.
+
+            ptinfo = getPatientInfoBySequence(ptinfos, seqinfo)
+
+            if not ptinfo:
+                seqs_skipped += 1
+
+                print "Skipping sequence %s with no patient info." % line.strip()
+
+                if fout:
+                    if not fout.closed:
+                        # print "Closing file %s." % getSequenceFileName(subtype, fyear)
+                        fout.close()
+
+                # Restart loop to keep logic simple.
+
+                continue
+                    
+            # Have we seen this patient this year ?
+
+            if year in patients_by_year:
+                if ptinfo['patientid'] in patients_by_year[year]:
                     seqs_skipped += 1
 
-                    print "Skipping sequence with corrupted description %s." % line.strip()
-                    # print "Closing file %s." % getSequenceFileName(subtype, fyear)
-                    fout.close()
+                    # Yep.  Skip this sequence by closing the file handle.
 
-                    # Restart loop to keep logic simple.
-
-                    continue
-                    
-                # Have we seen this patient this year ?
-
-                if year in patients_by_year:
-                    if ptinfo['patientid'] in patients_by_year[year]:
-                        seqs_skipped += 1
-
-                        # Yep.  Skip this sequence by closing the file handle.
-
-                        if fout:
-                            if not fout.closed:
-                                # print "Closing file %s." % getSequenceFileName(subtype, fyear)
-                                fout.close()
-
-                        # print "Skipping patient %s for year %i." % (ptinfo['patientid'],
-                        #                                             year)
-
-                        # Restart loop to keep logic simple.
-
-                        continue
-
-                # Nope, this is a new year and/or a new patient.
-                # Add the year and patient to our tracking array.
-
-                if not year in patients_by_year:
-                    patients_by_year[year] = [ ]
-
-                patients_by_year[year].append(ptinfo['patientid'])
-
-                # print "Added patient %s to year %i." % (ptinfo['patientid'],
-                #                                         year)
-                # print "Seen %i patients in year %i." % (len(patients_by_year[year]),
-                #                                         year)
-
-                # Do we need to close the current output file handle ?
-
-                if (year != fyear):
                     if fout:
                         if not fout.closed:
                             # print "Closing file %s." % getSequenceFileName(subtype, fyear)
                             fout.close()
 
-                fyear = year
+                    # print "Skipping patient %s for year %i." % (ptinfo['patientid'],
+                    #                                             year)
 
-                # Do we need to open the current output file handle ?
+                    # Restart loop to keep logic simple.
 
-                if (not fout) or fout.closed:
-                    filename = getSequenceFileName(subtype, fyear)
-                    # print "Opening file %s." % filename
-                    fout = open(filename, "a")
+                    continue
 
-                seqs_written += 1
-                fout.write(line)
+            # Nope, this is a new year and/or a new patient.
+            # Add the year and patient to our tracking array.
+
+            if not year in patients_by_year:
+                patients_by_year[year] = [ ]
+
+            patients_by_year[year].append(ptinfo['patientid'])
+
+            # print "Added patient %s to year %i." % (ptinfo['patientid'],
+            #                                         year)
+            # print "Seen %i patients in year %i." % (len(patients_by_year[year]),
+            #                                         year)
+
+            # Do we need to close the current output file handle ?
+
+            if (year != fyear):
+                if fout:
+                    if not fout.closed:
+                        # print "Closing file %s." % getSequenceFileName(subtype, fyear)
+                        fout.close()
+
+            fyear = year
+
+            # Do we need to open the current output file handle ?
+
+            if (not fout) or fout.closed:
+                filename = getSequenceFileName(subtype, fyear)
+                # print "Opening file %s." % filename
+                fout = open(filename, "a")
+
+            seqs_written += 1
+            fout.write(line)
+
         else:
             if fout:
                 if not fout.closed:
