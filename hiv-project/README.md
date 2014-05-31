@@ -11,11 +11,18 @@ subtypes.
 
 The source files, acquired from the LANL HIV genomic database, are:
 
+    ./sequences_A1.fasta
+    All complete genomic sequences for HIV-1 subtype A1.
+
     ./sequences_B.fasta
     All complete genomic sequences for HIV-1 subtype B.
 
     ./sequences_C.fasta
     All complete genomic sequences for HIV-1 subtype C.
+
+    ./patients_A1.txt
+    All patient information corresponding to the sequences for
+    subtype A1. 
 
     ./patients_B.txt
     All patient information corresponding to the sequences for
@@ -46,8 +53,9 @@ the following scripts:
     the following sequence and patient information is present and
     configured in the repo:
 
-    a.  All sequences of subtype B in the United States.
-    b.  All sequences of subtype C worldwide.
+    a.  All complete sequences of subtype A1 worldwide.
+    b.  All complete sequences of subtype B in North America.
+    c.  All complete sequences of subtype C worldwide.
 
     You may add or modify the collection of sequences to be analyzed
     by modifying the SOURCES global in the lanl.py library.

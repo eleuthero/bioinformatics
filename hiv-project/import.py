@@ -44,12 +44,13 @@ def getThreshold(line):
 # Insert a sequence into the database.
 def insertSequence(record, ptinfo):
     print "INSERT INTO `sequence` " \
-          "(`year`, `consensus`, `threshold`, `subtype`, `country`, `description`, `sequence`) " \
-          "VALUES ('%s', False, NULL, '%s', '%s', '%s', '%s');" % (str(ptinfo['year']),
-                                                                   ptinfo['subtype'],
-                                                                   ptinfo['country'],
-                                                                   record.description,
-                                                                   record.seq)
+          "(`year`, `consensus`, `threshold`, `subtype`, `georegion`, `country`, `description`, `sequence`) " \
+          "VALUES ('%s', False, NULL, '%s', '%s', '%s', '%s', '%s');" % (str(ptinfo['year']),
+                                                                         ptinfo['subtype'],
+                                                                         ptinfo['georegion'],
+                                                                         ptinfo['country'],
+                                                                         record.description,
+                                                                         record.seq)
 
 # Insert a consensus sequence into the database.
 def insertConsensus(subtype, record):
@@ -57,12 +58,12 @@ def insertConsensus(subtype, record):
     year = getYear(record.description)
 
     print "INSERT INTO `sequence` " \
-          "(`year`, `consensus`, `threshold`, `subtype`, `country`, `description`, `sequence`) " \
-          "VALUES ('%s', True, %.2f, '%s', NULL, '%s', '%s');" % (getYear(record.description),
-                                                                  getThreshold(record.description),
-                                                                  subtype,
-                                                                  record.description,
-                                                                  record.seq)
+          "(`year`, `consensus`, `threshold`, `subtype`, `georegion`, `country`, `description`, `sequence`) " \
+          "VALUES ('%s', True, %.2f, '%s', NULL, NULL, '%s', '%s');" % (getYear(record.description),
+                                                                        getThreshold(record.description),
+                                                                        subtype,
+                                                                        record.description,
+                                                                        record.seq)
 
 def importSource(source):
     global SEQUENCE_DIR

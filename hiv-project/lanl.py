@@ -13,7 +13,10 @@ SOURCES = [ { 'subtype':   'B',
               'patient':   './patients_B.txt' },
             { 'subtype':   'C',
               'sequences': './sequences_C.fasta',
-              'patient':   './patients_C.txt' } ]
+              'patient':   './patients_C.txt' },
+            { 'subtype':   'A1',
+              'sequences': './sequences_A1.fasta',
+              'patient':   './patients_A1.txt' } ]
 
 # =========
 # Functions
@@ -37,6 +40,7 @@ def getPatientInfo(path):
                       'accession' : tokens[3],
                       'subtype'   : tokens[5],
                       'country'   : tokens[6],
+                      'georegion' : tokens[8],
                       'year'      : int(tokens[7]) if tokens[7] else None }
                 l.append(i)
 
@@ -48,6 +52,7 @@ def getPatientInfo(path):
                       'accession' : tokens[3],
                       'subtype'   : tokens[5],
                       'country'   : tokens[6],
+                      'georegion' : '',
                       'year'      : int(tokens[7]) if tokens[7] else None }
                 l.append(i)
     return l
