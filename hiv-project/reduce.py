@@ -10,7 +10,8 @@ from Bio           import Seq, SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq       import MutableSeq
 
-SEQUENCE_DIR = "./sequences/"
+from lanl          import SEQUENCE_DIR
+
 THRESHOLD = int(sys.argv[1]) if (len(sys.argv) >= 2) else 1
 
 # =========

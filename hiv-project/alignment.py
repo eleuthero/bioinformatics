@@ -4,7 +4,12 @@ from os      import listdir
 from os.path import isfile, isdir, join
 from Bio     import SeqIO
 
-SEQUENCE_DIR = "./sequences/"
+from lanl    import SEQUENCE_DIR
+
+# =========
+# Globals 
+# =========
+
 ROWLEN = 50
 
 # =========
@@ -75,9 +80,9 @@ def createAlignmentHeatMap(fout, population, maxlen):
      </body>
     </html>""")
 
-# ====
+# =========
 # Main 
-# ====
+# =========
 
 for subtype in listdir(SEQUENCE_DIR):
     if isdir(join(SEQUENCE_DIR, subtype)):

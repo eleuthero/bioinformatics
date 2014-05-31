@@ -9,14 +9,16 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Align     import AlignInfo
 from Bio.Alphabet  import generic_dna
 
-# Path to sequence directory.
-
-SEQUENCE_DIR = "./sequences/"
+from lanl          import SEQUENCE_DIR
 
 # When there are at least this many sequences for a year, generate
 # 70% ~ 100% threshold dumb consensus sequences for the year.  If
 # there are fewer this number, a single, simple majority consensus
 # will be generated.
+
+# =========
+# Globals
+# =========
 
 THRESHOLD = 10
 
@@ -104,10 +106,11 @@ def generateConsensusSequence(fsum, path, item):
             generateConsensus(subtype, year, summary, fsum, fout)
         else:
 
-            # Generate a majority consensus; there aren't enough sequences
-            # to justify the granularity of multiple consensus sequences.
+            # Generate a majority and a 100% consensus; there aren't enough
+            # sequences to justify the granularity of multiple consensus sequences.
 
             generateConsensusThreshold(subtype, year, summary, fsum, fout, 0.5)
+            generateConsensusThreshold(subtype, year, summary, fsum, fout, 1.0)
 
 def generateConsensusSequences(subtype):
 
