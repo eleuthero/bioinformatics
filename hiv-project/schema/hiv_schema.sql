@@ -21,6 +21,9 @@ CREATE TABLE `sequence`
 	`threshold`
 		DECIMAL(3, 2)
 		DEFAULT NULL,
+	`georegion`
+		VARCHAR(32)
+		DEFAULT NULL,
 	`country`
 		VARCHAR(32)
 		DEFAULT NULL,
