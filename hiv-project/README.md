@@ -42,16 +42,26 @@ the following scripts:
     file that connects the accession ID of each sequence to the
     patient code and year the sample was sequenced.
 
-    The script supports analysis of multiple subtypes, but at present
-    only subtype B is analyzed.
+    The script supports analysis of multiple subtypes.  At present,
+    the following sequence and patient information is present and
+    configured in the repo:
+
+    a.  All sequences of subtype B in the United States.
+    b.  All sequences of subtype C worldwide.
+
+    You may add or modify the collection of sequences to be analyzed
+    by modifying the SOURCES global in the lanl.py library.
 
 2.  The script consensus.py determines the longest aligned 
     sequence in the collection and extends all sequences to that
     length by padding them on the left with dashes.  This makes all
     of the sequences in the multiple alignment the same length, so
     BioAlign can be used to generate a dumb consensus sequence.
-    A set of 100%, 90%, 80%, and 70% consensus sequences are then
-    generated for each year and written to a consensus sequence file.
+    If there are at least 10 sequences for the year, a set of 100%,
+    90%, 80%, and 70% consensus sequences are then generated for the
+    year and written to a consensus sequence file.  If there are less
+    than 10 sequences, only a 50% and  100% consensus sequences are
+    generated.
 
 3.  The script reduce.py examines all of the original sequences and
     calculates how many of those sequences contribute to the extended
@@ -91,8 +101,7 @@ Key to generated files:
     global alignment (all years for subtype SSSS, not just year YYYY).
 
     ./sequences/SSSS/YYYY.fasta.extended.consensus:
-    70%, 80%, 90%, 100% consensus sequences for all sequences in
-    YYYY.fasta.extended.
+    Contains consensus sequences for all sequences in YYYY.fasta.extended.
 
     ./sequences/SSSS/YYYY.fasta.extended.reduced: 
     Contains all sequences in YYYY.fasta.extended, but with poorly-covered
@@ -108,6 +117,13 @@ Key to generated files:
     ./sequences/SSSS/summary.consensus.reduced:
     Contains all sequences in summary.consensus, but with poorly-covered
     alignment segments removed.
+
+    ./schema/hiv_data.sql:
+    A file containing a SQL script to insert analyzed sequences into a
+    MySQL 5.5 database configured by ./schema/hiv_schema.sql.  One record
+    will be inserted into the database for every retained sequence, and
+    one record will be inserted for every generated consensus sequence
+    (by subtype, year, and consensus threshold).
 
     ./alignment_SSSS.html:
     Contains a "heat map" of the number of reduced sequences (all sequences
